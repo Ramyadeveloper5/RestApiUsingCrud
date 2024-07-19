@@ -67,8 +67,40 @@ def userCreation():
     return single_user_schema.jsonify(user_create)
 
 # User Get : Read Method
+@app.route('/allusershow',methods=['GET'])
+def get_all_user():
+    all_user = UserModel.query.all()
+    result = multi_user_schema.dump(all_user)
+    return jsonify(result)
 
+# Show Single User By Id
+@app.route('/showsingleuser/<id>',methods=['GET'])
+def get_single_user(id):
+    single_user = UserModel.query.get(id)
+    user = single_user_schema.jsonify(single_user)
+    return user
 
+# Update Single User  : Update Method
+@app.route('/updatesingleuser/<id>',methods=['PUT'])
+def update_user(id):
+    get_user = UserModel.query.get(id)
+    username = request.json['username']
+    email = request.json['email']
+    mobile = request.json['mobile']
+    get_user.username = username
+    get_user.email = email
+    get_user.mobile = mobile
+    database.session.commit()
+    user_update = single_user_schema.jsonify(get_user)
+    return user_update
+
+# Delete User : Delete
+@app.route('/deleteuser/<id>',methods=['DELETE'])
+def delete_user(id):
+    get_user = UserModel.query.get(id)
+    database.session.delete(get_user)
+    database.session.commit()
+    return single_user_schema.jsonify(get_user)
 
 
 
